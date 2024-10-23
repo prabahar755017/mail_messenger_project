@@ -1,0 +1,27 @@
+<!-- templates/social_app/inbox.html -->
+
+{% extends "social_app/base.html" %}
+
+{% block content %}
+<h1>Inbox</h1>
+
+{% if messages %}
+    <ul>
+        {% for message in messages %}
+            <li>
+                <strong>From:</strong> {{ message.sender.username }} <br>
+                <strong>To:</strong> {{ message.recipient_email }} <br>
+                <strong>Content:</strong> {{ message.content }} <br>
+                <strong>Sent At:</strong> {{ message.timestamp }} <br>
+                <a href="{% url 'delete_message' message.id %}">Delete</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No messages in your inbox.</p>
+{% endif %}
+
+<a href="{% url 'send_message' %}">Send New Message</a>
+<a href="{% url 'sent_messages' %}">Sending  Message</a>
+
+{% endblock %}

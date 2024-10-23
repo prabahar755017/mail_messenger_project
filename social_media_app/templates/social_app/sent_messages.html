@@ -1,0 +1,25 @@
+<!-- templates/social_app/sent_messages.html -->
+
+{% extends "social_app/base.html" %}
+
+{% block content %}
+<h1>Sent Messages</h1>
+
+{% if messages %}
+    <ul>
+        {% for message in messages %}
+            <li>
+                <strong>To:</strong> {{ message.recipient_email }} <br>
+                <strong>Content:</strong> {{ message.content }} <br>
+                <strong>Sent At:</strong> {{ message.timestamp }} <br>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No sent messages.</p>
+{% endif %}
+
+<a href="{% url 'send_message' %}">Send New Message</a>
+<a href="{% url 'inbox' %}">View Inbox</a>
+
+{% endblock %}

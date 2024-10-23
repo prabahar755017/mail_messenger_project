@@ -1,0 +1,63 @@
+{% extends 'social_app/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1 class="my-4">Send a Message</h1>
+    
+    <form method="POST" enctype="multipart/form-data" class="message-form">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="recipient_email">Recipient Email:</label>
+            <input type="email" id="recipient_email" name="recipient_email" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="content">Message Content:</label>
+            <textarea id="content" name="content" class="form-control" rows="4" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="attachments">Attachments:</label>
+            <input type="file" id="attachments" name="attachments" class="form-control-file" multiple>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Send Message</button>
+    </form>
+
+    <div class="success-message" style="display: none;">
+        <p>Your message has been sent successfully!</p>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const form = document.querySelector('.message-form');
+    const successMessage = document.querySelector('.success-message');
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();  // Prevent form submission for animation
+
+        // Simulate form submission and show success message
+        setTimeout(() => {
+            successMessage.style.display = 'block';
+            successMessage.classList.add('fade-in');
+        }, 500); // Delay to mimic sending
+
+        form.submit(); // Now submit the form after showing the message
+    });
+</script>
+<style>
+    .success-message {
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+    }
+    
+    .success-message.fade-in {
+        opacity: 1;
+    }
+    
+</style>
+{% endblock %}

@@ -1,0 +1,121 @@
+
+<div class="full-page">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card registration-card shadow p-4 mt-5">
+                    <h2 class="text-center mb-4">Create Your Account</h2>
+
+                    <!-- Django Messages -->
+                    {% if messages %}
+                        <div class="alert-container">
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <!-- Registration Form -->
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" placeholder="Choose a username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email address" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Enter a secure password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Register</button>
+                    </form>
+
+                    <!-- Login Link -->
+                    <div class="text-center mt-3">
+                        <span>Already have an account?</span>
+                        <a href="{% url 'login' %}" class="login-link">Login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* General layout improvements */
+    .full-page {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f7f7f7;
+    }
+
+    .registration-card {
+        border-radius: 12px;
+        background-color: #ffffff;
+        padding: 40px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-control {
+        padding: 10px 15px;
+        font-size: 1rem;
+        border-radius: 5px;
+        border: 1px solid #ced4da;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        font-size: 1rem;
+        padding: 10px;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+
+    .login-link {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .login-link:hover {
+        color: #0056b3;
+        text-decoration: underline;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 576px) {
+        .registration-card {
+            padding: 20px;
+            margin-top: 10px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .full-page {
+            padding: 0 20px;
+        }
+
+        .registration-card {
+            padding: 30px;
+        }
+    }
+</style>
+
