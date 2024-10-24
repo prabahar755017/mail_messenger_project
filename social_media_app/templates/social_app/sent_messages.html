@@ -1,25 +1,114 @@
-<!-- templates/social_app/sent_messages.html -->
-
 {% extends "social_app/base.html" %}
 
 {% block content %}
-<h1>Sent Messages</h1>
+<div class="container mt-4">
+    <h1 class="mb-4 text-primary">Sent Mail</h1>
 
-{% if messages %}
-    <ul>
-        {% for message in messages %}
-            <li>
-                <strong>To:</strong> {{ message.recipient_email }} <br>
-                <strong>Content:</strong> {{ message.content }} <br>
-                <strong>Sent At:</strong> {{ message.timestamp }} <br>
-            </li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>No sent messages.</p>
-{% endif %}
+    <!-- Table Wrapper for responsiveness -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead class="thead-dark bg-primary text-white">
+                <tr>
+                    <th scope="col">Recipient</th>
+                    <th scope="col">Content</th>
+                    <th scope="col">Files</th>
+                    <th scope="col">Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for message in messages %}
+                    <tr class="animate-row">
+                        <td><i class="fas fa-envelope"></i> {{ message.recipient_email }}</td>
+                        <td>{{ message.content|truncatewords:15 }}
+                            <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ message.content }}">
+                                <i class="fas fa-info-circle text-secondary"></i>
+                            </span>
+                        </td>
+                        <td>
+                            {% if message.attachments.exists %}
+                                <ul class="list-unstyled">
+                                    {% for attachment in message.attachments.all %}
+                                        <li>
+                                            <i class="fas fa-paperclip text-success"></i> 
+                                            <a href="{{ attachment.file.url }}" class="text-decoration-none" download>{{ attachment.file.name }}</a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <span class="text-muted">No files attached</span>
+                            {% endif %}
+                        </td>
+                        <td><i class="fas fa-clock"></i> {{ message.timestamp|date:"Y-m-d H:i" }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-<a href="{% url 'send_message' %}">Send New Message</a>
-<a href="{% url 'inbox' %}">View Inbox</a>
+    <!-- Pagination (if needed) -->
+    <nav aria-label="Message pagination">
+        <ul class="pagination justify-content-center">
+            {% if messages.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ messages.previous_page_number }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            {% endif %}
+            {% for num in messages.paginator.page_range %}
+                <li class="page-item {% if messages.number == num %}active{% endif %}">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+            {% endfor %}
+            {% if messages.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ messages.next_page_number }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+<style>
+    /* Smooth table row hover animation */
+    .animate-row {
+        transition: all 0.3s ease-in-out;
+    }
+    .animate-row:hover {
+        background-color: #f8f9fa;
+        transform: translateY(-5px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
 
+    /* Customize the table appearance */
+    .table {
+        border: 1px solid #ddd;
+        background-color: #fff;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    .table th, .table td {
+        vertical-align: middle;
+        padding: 16px;
+    }
+
+    /* Pagination styles */
+    .pagination .page-item.active .page-link {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+    .pagination .page-link {
+        color: #007bff;
+    }
+
+    /* Add hover effect on links */
+    a.text-decoration-none:hover {
+        text-decoration: underline;
+    }
+
+    /* Tooltip */
+    [data-bs-toggle="tooltip"] {
+        cursor: pointer;
+    }
+</style>
 {% endblock %}

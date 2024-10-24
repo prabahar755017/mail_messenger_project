@@ -13,6 +13,8 @@ from django.core.files.storage import FileSystemStorage
 from django.core.mail import EmailMessage
 from django.utils.functional import SimpleLazyObject
 from django.contrib.auth import authenticate, login
+from django.core.serializers import serialize
+
 
 
 # Generate a random verification code
@@ -193,6 +195,14 @@ def send_message(request):
 @login_required
 def inbox(request):
     messages = Message.objects.filter(recipient_email=request.user.email, is_deleted=False).order_by('-timestamp')
+
+    for message in messages:
+        # Serialize attachments manually to include specific fields
+        message.attachments_list = [
+            {'file': attachment.file.url, 'file_name': attachment.file.name} 
+            for attachment in message.attachments.all()
+        ]
+
     return render(request, 'social_app/inbox.html', {'messages': messages})
 
 @login_required

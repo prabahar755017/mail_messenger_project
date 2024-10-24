@@ -7,34 +7,94 @@
     <div class="row">
         <!-- Main Content Area -->
         <div class="col-md-9 col-lg-10">
-            <div class="row justify-content-between align-items-center mb-3">
+            <div class="row justify-content-between align-items-center mb-3"> 
                 <div class="col text-end">
-                    <button class="btn btn-primary">Compose New Message</button>
+                    <button class="btn btn-primary" onclick="window.location.href='{% url 'send_message' %}'">
+                        <i class="fas fa-pencil-alt"></i> Compose New Message
+                    </button>
+                    
                 </div>
             </div>
 
             <!-- Email List -->
             {% if request.user.is_authenticated %}
-            <div class="email-list">
+        
+            <div class="container mt-4">
+                <h1 class="mb-4 text-primary">Inbox</h1>
+                
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead class="thead-dark bg-primary text-white">
+                            <tr>
+                                <th scope="col">Sender</th>
+                                <th scope="col">Content</th>
+                                <th scope="col">Files</th>
+                                <th scope="col">Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for message in messages %}
+                                <tr>
+                                    <td>
+                                        <i class="fas fa-user"></i> {{ message.sender.username }}
+                                    </td>
+                                    <td>
+                                        {{ message.content|truncatewords:15 }}
+                                        <!-- Tooltip for full content -->
+                                        <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ message.content }}">
+                                            <i class="fas fa-info-circle text-secondary"></i>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if message.attachments.exists %}
+                                            <ul class="list-unstyled">
+                                                {% for attachment in message.attachments.all %}
+                                                    <li>
+                                                        <i class="fas fa-file-alt text-success"></i> 
+                                                        <a href="{{ attachment.file.url }}" class="text-decoration-none" download>{{ attachment.file.name }}</a>
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% else %}
+                                            <span class="text-muted">No files attached</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <i class="fas fa-clock"></i> {{ message.timestamp|date:"Y-m-d H:i" }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
-                <h1>Inbox</h1>
-                {% if messages %}
-                <ul>
-                    {% for message in messages %}
-                    <li>
-                        <strong>From:</strong> {{ message.sender.username }} <br>
-                        <strong>To:</strong> {{ message.recipient_email }} <br>
-                        <strong>Content:</strong> {{ message.content }} <br>
-                        <strong>Sent At:</strong> {{ message.timestamp }} <br>
-                        <a href="{% url 'delete_message' message.id %}">Delete</a>
-                    </li>
-                    {% endfor %}
-                </ul>
-                {% else %}
-                <p>No messages in your inbox.</p>
-                {% endif %}
+                
+                <!-- Pagination (if needed) -->
+                <nav aria-label="Message pagination">
+                    <ul class="pagination justify-content-center">
+                        {% if messages.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ messages.previous_page_number }}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                        {% for num in messages.paginator.page_range %}
+                            <li class="page-item {% if messages.number == num %}active{% endif %}">
+                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                            </li>
+                        {% endfor %}
+                        {% if messages.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ messages.next_page_number }}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            
             </div>
-        </div>
+            
         {% else %}
         <p>You are not logged in. Please login and Welcome to our mail messenger<a>
         {% endif %}
